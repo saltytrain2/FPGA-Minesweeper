@@ -14,7 +14,9 @@ entity cursor is
 		ps2_data			:	INOUT		STD_LOGIC;
 		left_click	: OUT STD_LOGIC;
 		right_click	: OUT STD_LOGIC;
-		middle_click : OUT STD_LOGIC
+		middle_click : OUT STD_LOGIC;
+		Left_sqrt : out STD_LOGIC_VECTOR (255 downto 0);
+		Right_sqrt: out STD_LOGIC_VECTOR (255 downto 0)
 	);
 end cursor;
 
@@ -40,6 +42,8 @@ architecture cursor_arc of cursor is
 	signal cursor_x_int : unsigned(10 downto 0);
 	signal cursor_y_int : unsigned(10 downto 0);
 	signal mouse_data_new : std_logic;
+	signal l_click: std_logic;
+	signal r_click: std_logic;
 
 begin
 
@@ -49,17 +53,19 @@ begin
 		ps2_clk => ps2_clk,
 		ps2_data => ps2_data,
 		mouse_data_new => mouse_data_new,
-		left_click => left_click,
-		right_click => right_click,
+		left_click => l_click,
+		right_click => r_click,
 		middle_click => middle_click,
 		x_move => x_move,
 		y_move => y_move
 		);
 
+	left_click <= l_click;
+	right_click <= r_click;
 	cursor_x <= std_logic_vector(cursor_x_int);
 	cursor_y <= std_logic_vector(cursor_y_int);
 
-	process (mouse_data_new)
+	process (mouse_data_new,cursor_x_int,cursor_y_int,l_click,r_click)
 	begin
 		if (rising_edge(mouse_data_new) and mouse_data_new = '1') then
 			if (x_move(8) = '0' and unsigned(x_move(7 downto 0)) > to_unsigned(0, 10)) then
@@ -86,6 +92,37 @@ begin
 				end if;
 			end if;
 		end if;
-	end process;
 
+		For i in 0 to 15 loop
+		 for j in 0 to 15 loop 
+			if rising_edge(l_click) then 
+				if (((cursor_x_int < 80 + 30 * (i + 1))  And (cursor_x_int > 80 + 30 * i)) 
+					And ((cursor_y_int > 480 - (j + 1) * 30) And (cursor_y_int < 480 - j * 30))) then
+					
+					left_sqrt (i + j * 16) <= '1';
+					
+				else	
+				
+					left_sqrt (i + j * 16) <= '0';
+					
+				end if; 
+			end if;
+			
+			if rising_edge(r_click) then 
+				if (((cursor_x_int < 80 + 30 * (i + 1))  And (cursor_x_int > 80 + 30 * i)) 
+					And ((cursor_y_int > 480 - (j + 1) * 30) And (cursor_y_int < 480 - j * 30))) then
+					
+					right_sqrt (i + j * 16) <= '1';
+					
+				else	
+				
+					right_sqrt (i + j * 16) <= '0';
+					
+				end if; 
+			end if;
+		end loop;
+	end loop;
+end process;	
+			
+ 
 end cursor_arc;
