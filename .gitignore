@@ -1,0 +1,8 @@
+#ignore everything
+*
+
+
+# not design files
+!.gitignore
+!.vhd
+!.vht

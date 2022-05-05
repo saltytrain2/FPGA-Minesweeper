@@ -460,6 +460,21 @@ begin
 		wait for 5 ns;
 		
 		clk <= '0';
+		clicked <= std_logic_vector(to_unsigned(0, 256));
+		wait for 10 ns;
+		clk <= '1';
+		wait for 10 ns;
+		clk <= '0';
+		wait for 10 ns;
+		clk <= '1';
+		wait for 5 ns;
+		for i in game_revealed'range loop
+			assert(game_revealed_ans(i) /= '0' or game_revealed(i) = '0') report "tile " & integer'image(i) & " should not be revealed" severity error;
+			assert(game_revealed_ans(i) /= '1' or game_revealed(i) = '1') report "tile " & integer'image(i) & " should be revealed" severity error;
+		end loop;
+		wait for 5 ns;
+		
+		clk <= '0';
 		clicked(192) <= '1';
 		wait for 10 ns;
 		clk <= '1';

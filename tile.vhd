@@ -21,8 +21,10 @@ architecture behavioral of tile is
 begin
 	process (clk, reset)
 		variable status : unsigned(3 downto 0) := "0000";
+		variable isRevealed : std_logic := '0';
 	begin
 		if (reset = '1') then
+			isRevealed := '0';
 			revealed <= '0';
 			zero_status <= '1';
 			tile_status <= "0000";
@@ -47,9 +49,10 @@ begin
 			if (clicked = '1' or (neighbor_revealed(7) = '1' and neighbor_zero_status(7) = '1') or (neighbor_revealed(6) = '1' and neighbor_zero_status(6) = '1') or 
 				(neighbor_revealed(5) = '1' and neighbor_zero_status(5) = '1') or (neighbor_revealed(4) = '1' and neighbor_zero_status(4) = '1') or
 				(neighbor_revealed(3) = '1' and neighbor_zero_status(3) = '1') or (neighbor_revealed(2) = '1' and neighbor_zero_status(2) = '1') or
-				(neighbor_revealed(1) = '1' and neighbor_zero_status(1) = '1') or (neighbor_revealed(0) = '1' and neighbor_zero_status(0) = '1')) then revealed <= '1';
-			else revealed <= '0';
+				(neighbor_revealed(1) = '1' and neighbor_zero_status(1) = '1') or (neighbor_revealed(0) = '1' and neighbor_zero_status(0) = '1')) then isRevealed := '1';
 			end if;
+			
+			revealed <= isRevealed;
 		end if;
 	end process;
 end behavioral;
