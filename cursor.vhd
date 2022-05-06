@@ -99,11 +99,11 @@ begin
 				if (((cursor_x_int < 80 + 30 * (i + 1))  And (cursor_x_int > 80 + 30 * i)) 
 					And ((cursor_y_int > 480 - (j + 1) * 30) And (cursor_y_int < 480 - j * 30))) then
 					
-					left_sqrt (i + j * 16) <= '1';
+					left_sqrt (i + (j * 16)) <= '1';
 					
 				else	
 				
-					left_sqrt (i + j * 16) <= '0';
+					left_sqrt (i + (j * 16)) <= '0';
 					
 				end if; 
 			end if;
@@ -112,11 +112,11 @@ begin
 				if (((cursor_x_int < 80 + 30 * (i + 1))  And (cursor_x_int > 80 + 30 * i)) 
 					And ((cursor_y_int > 480 - (j + 1) * 30) And (cursor_y_int < 480 - j * 30))) then
 					
-					right_sqrt (i + j * 16) <= '1';
+					right_sqrt (i + (j * 16)) <= '1';
 					
 				else	
 				
-					right_sqrt (i + j * 16) <= '0';
+					right_sqrt (i + (j * 16)) <= '0';
 					
 				end if; 
 			end if;
