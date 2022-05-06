@@ -29,9 +29,10 @@ architecture game_state_tb1 of game_state_tb is
 	-- different signals associated with the tile
 	signal clk : std_logic;
 	signal reset : std_logic;
-	signal bomb_in, clicked : std_logic_vector(255 downto 0);
+	signal bomb_in, left_clicked, right_clicked : std_logic_vector(255 downto 0);
 	signal game_status, game_status_ans : tile_status_array;
 	signal game_revealed, game_revealed_ans : std_logic_vector(255 downto 0);
+	signal game_flagged, game_flagged_ans : std_logic_vector(255 downto 0);
 	signal game_over, game_over_ans : std_logic;
 	
 	component game_state
@@ -39,9 +40,11 @@ architecture game_state_tb1 of game_state_tb is
 			clk : in std_logic;
 			reset : in std_logic;
 			bomb_in : in std_logic_vector(255 downto 0);
-			clicked : in std_logic_vector(255 downto 0);
+			left_clicked : in std_logic_vector(255 downto 0);
+			right_clicked : in std_logic_vector(255 downto 0);
 			game_status : out tile_status_array;
 			game_revealed : out std_logic_vector(255 downto 0);
+			game_flagged : out std_logic_vector(255 downto 0);
 			game_over : out std_logic
 			
 		);
@@ -52,9 +55,11 @@ begin
 		clk => clk,
 		reset => reset,
 		bomb_in => bomb_in,
-		clicked => clicked,
+		left_clicked => left_clicked,
+		right_clicked => right_clicked,
 		game_status => game_status,
 		game_revealed => game_revealed,
+		game_flagged => game_flagged,
 		game_over => game_over
 	);
 	
@@ -62,11 +67,13 @@ begin
 	begin
 		reset <= '0';
 		bomb_in <= std_logic_vector(resize(start_pos, 256));
-		clicked <= std_logic_vector(to_unsigned(0, 256));
+		left_clicked <= std_logic_vector(to_unsigned(0, 256));
+		right_clicked <= std_logic_vector(to_unsigned(0, 256));
 		game_over_ans <= '0';
 		
 		game_status_ans <= (others=>(others=>'0'));
 		game_revealed_ans <= std_logic_vector(to_unsigned(0, 256));
+		game_flagged_ans <= std_logic_vector(to_unsigned(0, 256));
 		-- two clock cycles of nothing, hold state
 		clk <= '0';
 		wait for 10 ns;
@@ -94,7 +101,7 @@ begin
 		
 		-- takes around 16 clock edges for the entire signal to propagate through all tiles
 		clk <= '0';
-		clicked(78) <= '1';
+		left_clicked(78) <= '1';
 		wait for 10 ns;
 		clk <= '1';
 		game_revealed_ans(255) <= '1';
@@ -179,7 +186,7 @@ begin
 		reset <= '0';
 		wait for 10 ns;
 		bomb_in <= std_logic_vector(act_game_pos);
-		clicked <= std_logic_vector(to_unsigned(0, 256));
+		left_clicked <= std_logic_vector(to_unsigned(0, 256));
 		game_over_ans <= '0';
 		game_revealed_ans <= std_logic_vector(to_unsigned(0, 256));
 		clk <= '0';
@@ -196,7 +203,64 @@ begin
 		end loop;
 		wait for 5 ns;
 		
-		clicked(120) <= '1';
+		clk <= '0';
+		right_clicked(41) <= '1';
+		right_clicked(136) <= '1';
+		wait for 10 ns;
+		clk <= '1';
+		wait for 10 ns;
+		clk <= '0';
+		wait for 10 ns;
+		clk <= '1';
+		game_flagged_ans(41) <= '1';
+		game_flagged_ans(136) <= '1';
+		wait for 5 ns;
+		for i in game_flagged'range loop
+			assert(game_flagged_ans(i) /= '0' or game_flagged(i) = '0') report "tile " & integer'image(i) & " should not be flagged" severity error;
+			assert(game_flagged_ans(i) /= '1' or game_flagged(i) = '1') report "tile " & integer'image(i) & " should be flagged" severity error;
+			assert(game_revealed_ans(i) /= '0' or game_revealed(i) = '0') report "tile " & integer'image(i) & " should not be revealed" severity error;
+			assert(game_revealed_ans(i) /= '1' or game_revealed(i) = '1') report "tile " & integer'image(i) & " should be revealed" severity error;
+		end loop;
+		wait for 5 ns;
+		
+		clk <= '0';
+		right_clicked(41) <= '0';
+		right_clicked(136) <= '0';
+		wait for 10 ns;
+		clk <= '1';
+		wait for 10 ns;
+		clk <= '0';
+		wait for 10 ns;
+		clk <= '1';
+		wait for 5 ns;
+		for i in game_flagged'range loop
+			assert(game_flagged_ans(i) /= '0' or game_flagged(i) = '0') report "tile " & integer'image(i) & " should not be flagged" severity error;
+			assert(game_flagged_ans(i) /= '1' or game_flagged(i) = '1') report "tile " & integer'image(i) & " should be flagged" severity error;
+			assert(game_revealed_ans(i) /= '0' or game_revealed(i) = '0') report "tile " & integer'image(i) & " should not be revealed" severity error;
+			assert(game_revealed_ans(i) /= '1' or game_revealed(i) = '1') report "tile " & integer'image(i) & " should be revealed" severity error;
+		end loop;
+		wait for 5 ns;
+		
+		clk <= '0';
+		left_clicked(136) <= '1';
+		right_clicked(41) <= '1';
+		wait for 10 ns;
+		clk <= '1';
+		wait for 10 ns;
+		clk <= '0';
+		wait for 10 ns;
+		clk <= '1';
+		game_flagged_ans(41) <= '0';
+		wait for 5 ns;
+		for i in game_flagged'range loop
+			assert(game_flagged_ans(i) /= '0' or game_flagged(i) = '0') report "tile " & integer'image(i) & " should not be flagged" severity error;
+			assert(game_flagged_ans(i) /= '1' or game_flagged(i) = '1') report "tile " & integer'image(i) & " should be flagged" severity error;
+			assert(game_revealed_ans(i) /= '0' or game_revealed(i) = '0') report "tile " & integer'image(i) & " should not be revealed" severity error;
+			assert(game_revealed_ans(i) /= '1' or game_revealed(i) = '1') report "tile " & integer'image(i) & " should be revealed" severity error;
+		end loop;
+		wait for 5 ns;
+		
+		left_clicked(120) <= '1';
 		clk <= '0';
 		wait for 10 ns;
 		clk <= '1';
@@ -223,10 +287,13 @@ begin
 		game_revealed_ans(105) <= '1';
 		game_revealed_ans(104) <= '1';
 		game_revealed_ans(103) <= '1';
+		game_flagged_ans(136) <= '0';
 		wait for 5 ns;
 		for i in game_revealed'range loop
 			assert(game_revealed_ans(i) /= '0' or game_revealed(i) = '0') report "tile " & integer'image(i) & " should not be revealed" severity error;
 			assert(game_revealed_ans(i) /= '1' or game_revealed(i) = '1') report "tile " & integer'image(i) & " should be revealed" severity error;
+			assert(game_flagged_ans(i) /= '0' or game_flagged(i) = '0') report "tile " & integer'image(i) & " should not be flagged" severity error;
+			assert(game_flagged_ans(i) /= '1' or game_flagged(i) = '1') report "tile " & integer'image(i) & " should be flagged" severity error;
 		end loop;
 		wait for 5 ns;
 		
@@ -375,7 +442,7 @@ begin
 		wait for 5 ns;
 		
 		clk <= '0';
-		clicked(5) <= '1';
+		left_clicked(5) <= '1';
 		wait for 10 ns;
 		clk <= '1';
 		wait for 10 ns;
@@ -432,7 +499,7 @@ begin
 		wait for 5 ns;
 		
 		clk <= '0';
-		clicked(193) <= '1';
+		left_clicked(193) <= '1';
 		wait for 10 ns;
 		clk <= '1';
 		wait for 10 ns;
@@ -460,7 +527,7 @@ begin
 		wait for 5 ns;
 		
 		clk <= '0';
-		clicked <= std_logic_vector(to_unsigned(0, 256));
+		left_clicked <= std_logic_vector(to_unsigned(0, 256));
 		wait for 10 ns;
 		clk <= '1';
 		wait for 10 ns;
@@ -475,7 +542,20 @@ begin
 		wait for 5 ns;
 		
 		clk <= '0';
-		clicked(192) <= '1';
+		left_clicked(193) <= '1';
+		wait for 10 ns;
+		clk <= '1';
+		wait for 5 ns;
+		for i in game_revealed'range loop
+			assert(game_revealed_ans(i) /= '0' or game_revealed(i) = '0') report "tile " & integer'image(i) & " should not be revealed" severity error;
+			assert(game_revealed_ans(i) /= '1' or game_revealed(i) = '1') report "tile " & integer'image(i) & " should be revealed" severity error;
+		end loop;
+		wait for 5 ns;
+		
+		clk <= '0';
+		
+		clk <= '0';
+		left_clicked(192) <= '1';
 		wait for 10 ns;
 		clk <= '1';
 		wait for 10 ns;
@@ -491,6 +571,21 @@ begin
 		end loop;
 		assert(game_over_ans /= '0' or game_over = '0') report "game should not be over" severity error;
 		assert(game_over_ans /= '1' or game_over = '1') report "game should be over" severity error;
+		wait for 5 ns;
+		
+		clk <= '0';
+		left_clicked(52) <= '1';
+		wait for 10 ns;
+		clk <= '1';
+		wait for 10 ns;
+		clk <= '0';
+		wait for 10 ns;
+		clk <= '1';
+		wait for 5 ns;
+		for i in game_revealed'range loop
+			assert(game_revealed_ans(i) /= '0' or game_revealed(i) = '0') report "tile " & integer'image(i) & " should not be revealed" severity error;
+			assert(game_revealed_ans(i) /= '1' or game_revealed(i) = '1') report "tile " & integer'image(i) & " should be revealed" severity error;
+		end loop;
 		wait for 5 ns;
 		
 		wait;
