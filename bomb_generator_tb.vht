@@ -28,14 +28,14 @@ begin
 	
 	process
 	begin
-		reset <= '1';
+		reset <= '0';
 		enable <= '1';
 		
 		wait for 10 ns;
-		reset <= '0';
+		reset <= '1';
 		
 		-- cycle through clock cycles, make sure all permutations contain 40 high bits
-		for i in 0 to 256 loop
+		for i in 0 to 1000 loop
 			clk <= '0';
 			wait for 10 ns;
 			clk <= '1';
@@ -57,6 +57,6 @@ begin
 			end if;
 		end loop;
 		
-		assert(num_highs = "101000") report "not exactly 40 high bits detected in permutation" severity error;
+		assert(num_highs = "101000") report "not exactly 40 high bits detected in permutation, detected " & integer'image(to_integer(num_highs)) & " high bits instead"  severity error;
 	end process;
 end bomb_generator_tb1;

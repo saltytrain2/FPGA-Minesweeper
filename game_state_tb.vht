@@ -65,7 +65,7 @@ begin
 	
 	process
 	begin
-		reset <= '0';
+		reset <= '1';
 		bomb_in <= std_logic_vector(resize(start_pos, 256));
 		left_clicked <= std_logic_vector(to_unsigned(0, 256));
 		right_clicked <= std_logic_vector(to_unsigned(0, 256));
@@ -181,9 +181,9 @@ begin
 		
 		
 		-- actual game simulation
-		reset <= '1';
-		wait for 10 ns;
 		reset <= '0';
+		wait for 10 ns;
+		reset <= '1';
 		wait for 10 ns;
 		bomb_in <= std_logic_vector(act_game_pos);
 		left_clicked <= std_logic_vector(to_unsigned(0, 256));
