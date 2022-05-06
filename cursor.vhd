@@ -97,7 +97,7 @@ begin
 		 for j in 0 to 15 loop 
 			if rising_edge(l_click) then 
 				if (((cursor_x_int < 80 + 30 * (i + 1))  And (cursor_x_int > 80 + 30 * i)) 
-					And ((cursor_y_int > 480 - (j + 1) * 30) And (cursor_y_int < 480 - j * 30))) then
+					And ((cursor_y_int > 480 + (j + 1) * 30) And (cursor_y_int < 480 + j * 30))) then
 					
 					left_sqrt (i + (j * 16)) <= '1';
 					
