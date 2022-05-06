@@ -94,12 +94,10 @@ begin
 		end if;
 		
 		
-	
-	if rising_edge(l_click) then 	
 		For i in 0 to 15 loop
 		 for j in 15 downto 0 loop 
 				if (((cursor_x_int < 80 + 30 * (i + 1))  And (cursor_x_int > 80 + 30 * i)) 
-					And ((cursor_y_int < (j + 1) * 30) And (cursor_y_int > j * 30))) then
+					And ((cursor_y_int < (j + 1) * 30) And (cursor_y_int > j * 30)) and l_click = '1') then
 					
 					left_sqrt (i + (j * 16)) <= '1';
 					
@@ -110,15 +108,13 @@ begin
 				end if;
 			end loop;
 	end loop;			
-end if;
 	
 	
-	if rising_edge(r_click) then
 		For i in 0 to 15 loop
 		 for j in 15 downto 0 loop
 			 
 				if (((cursor_x_int < 80 + 30 * (i + 1))  And (cursor_x_int > 80 + 30 * i)) 
-					And ((cursor_y_int < (j + 1) * 30) And (cursor_y_int > j * 30))) then
+					And ((cursor_y_int < (j + 1) * 30) And (cursor_y_int > j * 30)) and r_click = '1') then
 					
 					right_sqrt (i + (j * 16)) <= '1';
 					
@@ -129,7 +125,6 @@ end if;
 				end if; 
 			end loop;
 	end loop;
-end if;
 		
 end process;	
 			
