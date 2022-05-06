@@ -17,7 +17,7 @@ begin
 		variable seed : std_logic_vector(7 downto 0) := "00000001";
 		variable index : std_logic_vector(7 downto 0) := "00000010";
 	begin
-		if (reset = '1') then 
+		if (reset = '0') then 
 			random_number := (others=>'0');
 			seed := "00000001";
 			index := "00000010";

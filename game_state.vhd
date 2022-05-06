@@ -76,7 +76,7 @@ begin
 	process (clk, reset)
 		variable isGameOver: std_logic := '0';
 	begin
-		if (reset = '1') then 
+		if (reset = '0') then 
 			isGameOver := '0';
 		elsif (rising_edge(clk) and isGameOver /= '1') then
 			game_status <= tile_status;

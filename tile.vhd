@@ -25,7 +25,7 @@ begin
 		variable is_flagged : std_logic := '0';
 		variable flag_clock : std_logic := '0';
 	begin
-		if (reset = '1') then
+		if (reset = '0') then
 			is_revealed := '0';
 			is_flagged := '0';
 			flag_clock := '0';
