@@ -48,7 +48,15 @@ begin
 			else zero_status <= '0';
 			end if;
 			
-			if (right_clicked = '1' and flag_clock = '1' and is_revealed /= '1') then
+			if ((left_clicked = '1' and is_flagged = '0') or (neighbor_revealed(7) = '1' and neighbor_zero_status(7) = '1') or (neighbor_revealed(6) = '1' and neighbor_zero_status(6) = '1') or 
+				(neighbor_revealed(5) = '1' and neighbor_zero_status(5) = '1') or (neighbor_revealed(4) = '1' and neighbor_zero_status(4) = '1') or
+				(neighbor_revealed(3) = '1' and neighbor_zero_status(3) = '1') or (neighbor_revealed(2) = '1' and neighbor_zero_status(2) = '1') or
+				(neighbor_revealed(1) = '1' and neighbor_zero_status(1) = '1') or (neighbor_revealed(0) = '1' and neighbor_zero_status(0) = '1')) then is_revealed := '1';
+			end if;
+			
+			if (is_revealed = '1') then
+				is_flagged := '0';
+			elsif (right_clicked = '1' and flag_clock = '1') then
 				is_flagged := is_flagged xor '1';
 			end if;
 			
@@ -57,17 +65,7 @@ begin
 			elsif (right_clicked = '0' and flag_clock = '0') then
 				flag_clock := '1';
 			end if;
-			
-			-- the current tile should reveal itself when it is clicked, or if any of its neighbors have neighbors with no bombs and are revealed
-			if ((left_clicked = '1' and is_flagged = '0') or (neighbor_revealed(7) = '1' and neighbor_zero_status(7) = '1') or (neighbor_revealed(6) = '1' and neighbor_zero_status(6) = '1') or 
-				(neighbor_revealed(5) = '1' and neighbor_zero_status(5) = '1') or (neighbor_revealed(4) = '1' and neighbor_zero_status(4) = '1') or
-				(neighbor_revealed(3) = '1' and neighbor_zero_status(3) = '1') or (neighbor_revealed(2) = '1' and neighbor_zero_status(2) = '1') or
-				(neighbor_revealed(1) = '1' and neighbor_zero_status(1) = '1') or (neighbor_revealed(0) = '1' and neighbor_zero_status(0) = '1')) then is_revealed := '1';
-			end if;
-			
-			if (is_revealed = '1') then 
-				is_flagged := '0';
-			end if;
+
 			revealed <= is_revealed;
 			flag <= is_flagged;
 		end if;
