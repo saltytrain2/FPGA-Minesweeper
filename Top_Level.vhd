@@ -67,7 +67,9 @@ ENTITY Top_Level IS
     VGA_B 		 : out unsigned(7 downto 0); -- Blue[9:0]
 	 
 	PS2_CLK : inout std_logic;     -- Clock
-	PS2_DAT : inout std_logic    -- Data
+	PS2_DAT : inout std_logic;    -- Data
+	
+	LEDG : out std_logic_vector(8 downto 0)
 
 	);
 END Top_Level;
@@ -163,6 +165,9 @@ BEGIN
 
 	VGA_HS <= horiz_sync_int;
 	VGA_VS <= vert_sync_int;
+	
+	LEDG(8) <= left_click_int;
+	LEDG(0) <= right_click_int;	
 
 
 	U1: VGA_SYNC_module PORT MAP
