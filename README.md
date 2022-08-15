@@ -1,6 +1,6 @@
 # FPGA-Minesweeper
 
-A implementation of minesweeper for EEECE 4377 in VHDL
+A implementation of minesweeper for EECE 4377 in VHDL
 
 ## Required Peripherals/Software
   - Intel Quartus Prime
